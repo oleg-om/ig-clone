@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
-import HomeScreen from "./screens/HomeScreen";
+import * as React from "react";
+import SignedInStack from "./navigation";
 
 export default function App() {
-  return <HomeScreen />;
+  return <SignedInStack />;
 }
