@@ -1,6 +1,6 @@
 import {
   View,
-  Button,
+  Alert,
   TextInput,
   StyleSheet,
   Text,
@@ -13,6 +13,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Validator from "email-validator";
 
+import { firebase } from "../../firebase";
+
 const LoginForm = ({ navigation }) => {
   const LoginFormSchema = Yup.object().shape({
     email: Yup.string().email().required("An email is required"),
@@ -20,11 +22,35 @@ const LoginForm = ({ navigation }) => {
       .required()
       .min(8, "Your password has to have at least 8 characters"),
   });
+
+  const onLogin = async (email, password) => {
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+      console.log("firebase login successful", email, password);
+    } catch (error) {
+      Alert.alert(
+        "My Lord... ",
+        error.message + "\n\n ... What whould you like to do next?",
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("OK"),
+            style: "cancel",
+          },
+          {
+            text: "Sign Up",
+            onPress: () => navigation.push("SignupScreen"),
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <View style={styles.wrapper}>
       <Formik
         initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => onLogin(values.email, values.password)}
         validationSchema={LoginFormSchema}
         validateOnMount={true}
       >
