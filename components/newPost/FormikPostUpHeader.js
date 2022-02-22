@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import { Divider } from "react-native-elements";
+import validUrl from "valid-url";
 
 const PLACEHOLDER_IMG =
   "https://www.coalitionrc.com/wp-content/uploads/2018/10/placeholder.jpg";
@@ -14,12 +15,15 @@ const UploadPostSchema = Yup.object().shape({
     .required("A URL is required"),
 });
 
-const FormikPostUpHeader = () => {
+const FormikPostUpHeader = ({ navgation }) => {
   const [thumbnailUrl, setThumbnailUrl] = useState(PLACEHOLDER_IMG);
   return (
     <Formik
       initialValues={{ caption: "", imageUrl: "" }}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={(values) => {
+        console.log(values);
+        navgation.goBack();
+      }}
       validationSchema={UploadPostSchema}
       validateOnMount={true}
     >
@@ -40,7 +44,11 @@ const FormikPostUpHeader = () => {
             }}
           >
             <Image
-              source={{ uri: thumbnailUrl ? thumbnailUrl : PLACEHOLDER_IMG }}
+              source={{
+                uri: validUrl.isUri(thumbnailUrl)
+                  ? thumbnailUrl
+                  : PLACEHOLDER_IMG,
+              }}
               style={{ width: 100, height: 100 }}
             />
             <View style={{ flex: 1, marginLeft: 12 }}>
