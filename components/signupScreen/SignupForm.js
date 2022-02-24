@@ -36,12 +36,14 @@ const SignupForm = ({ navigation }) => {
         .auth()
         .createUserWithEmailAndPassword(email, password);
       console.log("firebase user created successful", email, password);
-      db.collection("users").add({
-        owner_uid: authUser.user.uid,
-        username: username,
-        email: authUser.user.email,
-        profile_picture: await getRandomProfilePicture(),
-      });
+      db.collection("users")
+        .doc(authUser.user.email)
+        .set({
+          owner_uid: authUser.user.uid,
+          username: username,
+          email: authUser.user.email,
+          profile_picture: await getRandomProfilePicture(),
+        });
     } catch (error) {
       Alert.alert("My Lord... ", error.message);
     }
